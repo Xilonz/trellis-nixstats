@@ -1,0 +1,3 @@
+nixstats_database_enabled: true
+nixstats_nginx_enabled: true
+nixstats_phpfpm_enabled: true

@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Arjan Steenbergen
+  description: Install NIXStats Agent on Trellis servers
+  company: Steenbergen Design
+  issue_tracker_url: https://github.com/Xilonz/nixstats-hetrixtools
+  license: MIT
+  min_ansible_version: 2.3
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+  galaxy_tags:
+    - trellis
+    - wordpress
+    - nixstats
+    - monitoring
+dependencies: []

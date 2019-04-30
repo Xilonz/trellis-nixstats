@@ -1,0 +1,72 @@
+[DEFAULT]
+max_data_span = 60
+max_data_age = 600
+logging_level = 30
+threads = 100
+interval = 60
+
+[cpu]
+interval = 1
+enabled = yes
+
+[diskusage]
+enabled = yes
+
+[iostat]
+interval = 1
+enabled = yes
+
+[loadavg]
+enabled = yes
+
+[memory]
+enabled = yes
+
+[network]
+interval = 1
+enabled = yes
+
+[ping]
+enabled = yes
+hosts = api.nixstats.com,sgp.nixstats.com,ams.nixstats.com,bhs.nixstats.com
+
+[process]
+enabled = yes
+
+[swap]
+enabled = yes
+
+[system]
+enabled = yes
+
+;[mongodb]
+;enabled=yes
+;connection_string=mongodb://username:password@127.0.0.1:27017/admin
+
+; status page URL must inclde ?auto at the end
+;[httpd]
+;enabled=yes
+;status_page_url=http://127.0.0.1/server-status?auto
+
+{% if nixstats_phpfpm_enabled %}
+[nginx]
+enabled = yes
+status_page_url = http://127.0.0.1:8080/status_page
+{% endif %}
+
+{% if nixstats_phpfpm_enabled %}
+[phpfpm]
+enabled = yes
+status_page_url = http://127.0.0.1:8080/status_phpfpm?json
+{% endif %}
+
+{% if nixstats_database_enabled %}
+[mysql]
+enabled = yes
+username={{ mysql_root_user }}
+password={{ mysql_root_password }}
+host=127.0.0.1
+database={{ nixstats_database_name }}
+port=3306
+socket=/var/run/mysqld/mysqld.sock
+{% endif %}

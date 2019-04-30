@@ -1,0 +1,79 @@
+---
+- name: Register Nixtats Agent service status
+  stat: 
+    path: "/etc/systemd/system/nixstatsagent.service"
+  register: service_status
+
+- name: Install Nixtats Agent
+  block:
+    - name: Download Agent
+      get_url: url=https://nixstats.com/nixstatsagent.sh dest=/tmp/nixstatsagent.sh
+
+    - name: Install Agent
+      shell: bash /tmp/nixstatsagent.sh {{ nixstats_user_id }} {{ nixstats_server_id }}
+      register: agent_install_out
+      failed_when: agent_install_out.stderr is not ""
+      
+    - name: Remove installer
+      file: path=/tmp/nixstatsagent.sh state=absent
+  when: not service_status.stat.exists
+
+- name: Setup Database NIXStats
+  block:
+    - name: Install Mysql Dependencies
+      apt:
+        name: python-mysqldb
+
+    - name: Get the first database name.
+      block:
+      - name: Get database name
+        set_fact:
+          nixstats_database_name: "{{ site_env.db_name }}"
+        with_dict: "{{ wordpress_sites }}"
+        when: site_uses_local_db and item.value.db_create | default(true)
+      when: nixstats_database_name is undefined
+  when: nixstats_database_enabled
+
+- name: Setup Nginx NIXStats
+  block: 
+    - name: Nginx NIXStats to sites available
+      template:
+        src: nginx_status.conf.j2
+        dest: "{{ nginx_path }}/sites-available/nixstats_nginx.conf"
+      notify: reload nginx
+
+    - name: Nginx NIXStats to sites enabled
+      file:
+        src: "{{ nginx_path }}/sites-available/nixstats_nginx.conf"
+        dest: "{{ nginx_path }}/sites-enabled/nixstats_nginx.conf"
+        state: link
+      notify: reload nginx
+  when: nixstats_nginx_enabled
+
+- name: Setup phpfpm NIXStats
+  block: 
+    - name: Nginx NIXStats to sites available
+      template:
+        src: phpfpm_status.conf.j2
+        dest: "{{ nginx_path }}/sites-available/nixstats_phpfpm.conf"
+      notify: reload nginx
+
+    - name: Nginx NIXStats to sites enabled
+      file:
+        src: "{{ nginx_path }}/sites-available/nixstats_phpfpm.conf"
+        dest: "{{ nginx_path }}/sites-enabled/nixstats_phpfpm.conf"
+        state: link
+      notify: reload nginx
+
+    - name: Create NIXStats php-fpm configuration file
+      template:
+        src: php-fpm.conf.j2
+        dest: /etc/php/7.3/fpm/pool.d/nixstats.conf
+      notify: reload php-fpm
+  when: nixstats_phpfpm_enabled
+
+- name: NIXStats configuration
+  template:
+    src: nixstats.ini.j2
+    dest: /etc/nixstats.ini
+  notify: reload nixstatsagent

@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+server {
+    listen 8080;
+    server_name localhost;
+
+    location /status_phpfpm {
+        fastcgi_pass unix:/var/run/php-fpm-wordpress.sock;        
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        allow 127.0.0.1;
+        deny all;
+    }
+}
