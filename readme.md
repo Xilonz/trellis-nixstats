@@ -7,18 +7,27 @@ Automaticly sets up the [NIXStats agent](https://github.com/NIXStats/nixstatsage
 - [NIXStats](https://nixstats.com/r/60694) account (affiliate link)
 - Ubuntu 16.04 (Xenial)
 
+## Installation
+Add this role to requirements.yml:
+```yaml
+- src: xilonz.trellis_nixstats # Case-sensitive!
+  version: 0.1.0 # Check for latest version!
+```
+Run `$ ansible-galaxy install -r requirements.yml` to install this new role.
 
 ## Role variables
 
-    # group_vars/<environment>/main.yml
-    ###################################
+```yaml
+# group_vars/<environment>/main.yml
+###################################
 
-    nixstats_user_id: ''
-    nixstats_server_id: ''
-    nixstats_database_name: '' #(optional, by default first database)
-    nixstats_database_enabled: true #(optional)
-    nixstats_nginx_enabled: true #(optional)
-    nixstats_phpfpm_enabled: true #(optional)
+nixstats_user_id: ''
+nixstats_server_id: ''
+nixstats_database_name: '' #(optional, by default first database)
+nixstats_database_enabled: true #(optional)
+nixstats_nginx_enabled: true #(optional)
+nixstats_phpfpm_enabled: true #(optional)
+```
 
 ## Hacking Trellis' Playbook
 
@@ -28,7 +37,7 @@ Add this role to `server.yml` **after** the last role:
 roles:
     # All other Trellis roles ...
     - { role: wordpress-setup, tags: [wordpress, wordpress-setup, letsencrypt] }
-    - { role: trellis-nixstats, tags: [nixstats]}
+    - { role: xilonz.trellis-nixstats, tags: [nixstats]}
 ```
 
 ## Limitations and known issues
