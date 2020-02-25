@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+$WorkDirectory /var/spool/rsyslog
+$ActionQueueFileName fwdRule1
+$ActionQueueMaxDiskSpace 1g
+$ActionQueueSaveOnShutdown on
+$ActionQueueType LinkedList
+$ActionResumeRetryCount -1
+$DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/nixstats.ca
+template(name="NixstatsLogFormat" type="string" string="<%pri%>%protocol-version% %timestamp:::date-rfc3339% %HOSTNAME% %app-name% %procid% %msgid% [{{ nixstats_server_id }}@{{ nixstats_user_id }} tag=\"rsyslog\" ] %msg%\n")
+action(type="omfwd" protocol="tcp" target="log.nixstats.com" port="10514" template="NixstatsLogFormat" StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" StreamDriverPermittedPeers="log.nixstats.com")

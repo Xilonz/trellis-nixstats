@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+module(load="imfile")
+$DefaultNetstreamDriverCAFile /etc/rsyslog.d/keys/nixstats.ca
+$PrivDropToGroup www-data
+
+
+input(type="imfile" tag="nginx-access" ruleset="filelog-nginx" file="{{ www_root }}/*/logs/access.log")
+input(type="imfile" tag="nginx-error" ruleset="filelog-nginx" file="{{ www_root }}/*/logs/error.log")
+
+template(name="NixstatsLogTemplateNginx" type="string" string="<%pri%>%protocol-version% %timestamp:::date-rfc3339% %HOSTNAME% %app-name% %procid% %msgid% [{{ nixstats_server_id }}@{{ nixstats_user_id }} tag=\"nginx\"] %msg%\n")
+
+ruleset(name="filelog-nginx"){
+action(type="omfwd" protocol="tcp" target="log.nixstats.com" port="10514" template="NixstatsLogTemplateNginx" StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" StreamDriverPermittedPeers="log.nixstats.com")
+}

@@ -8,6 +8,7 @@ server {
         stub_status on;
         allow 127.0.0.1;
         deny all;
+        access_log off;
     }
     {% endif %}
 
@@ -18,6 +19,7 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         allow 127.0.0.1;
         deny all;
+        access_log off;
     }
     {% endif %}
 }

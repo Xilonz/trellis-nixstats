@@ -10,7 +10,7 @@
       get_url: url=https://nixstats.com/nixstatsagent.sh dest=/tmp/nixstatsagent.sh
 
     - name: Install Agent
-      shell: bash /tmp/nixstatsagent.sh {{ nixstats_user_id }} {{ nixstats_server_id }}
+      shell: bash /tmp/nixstatsagent.sh {{ nixstats_server_id }} {{ nixstats_user_id }}
       register: agent_install_out
       failed_when: agent_install_out.stderr is not ""
       
@@ -56,6 +56,24 @@
     dest: /etc/php/7.3/fpm/pool.d/nixstats.conf
   notify: reload php-fpm
   when: nixstats_phpfpm_enabled
+
+- name: Create rsyslog working directory
+  file:
+    path: /var/spool/rsyslog/
+    state: directory
+
+- name: Setup NIXtats rsyslog
+  template:
+    src: rsyslog.conf.j2 
+    dest: /etc/rsyslog.d/31-nixstats.conf
+  notify: reload rsyslog
+
+- name: Setup Nixtats rsyslog nginx
+  template:
+    src: rsyslog-nginx.conf.j2 
+    dest: /etc/rsyslog.d/33-nixstats-nginx.conf
+  notify: reload rsyslog
+  when: nixstats_nginx_enabled
 
 - name: NIXStats configuration
   template:

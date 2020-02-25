@@ -2,3 +2,8 @@
     service:
       name: nixstatsagent
       state: restarted
+
+  - name: reload rsyslog
+    service:
+      name: rsyslog
+      state: restarted
