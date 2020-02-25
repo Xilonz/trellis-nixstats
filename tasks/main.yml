@@ -50,6 +50,16 @@
     path: /var/spool/rsyslog/
     state: directory
 
+- name: Create /etc/rsyslog.d/keys directory
+  file:
+    path: /etc/rsyslog.d/keys
+    state: directory
+
+- name: Downloading TLS CA file
+  get_url:
+    url: https://www.nixstats.com/nixstats.ca
+    dest: /etc/rsyslog.d/keys/nixstats.ca
+
 - name: Setup NIXStats rsyslog
   template:
     src: rsyslog.conf.j2 
