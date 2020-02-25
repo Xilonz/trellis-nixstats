@@ -8,12 +8,12 @@ Automaticly sets up the [NIXStats agent](https://github.com/NIXStats/nixstatsage
 - Ubuntu 16.04 (Xenial)
 
 ## Installation
-Add this role to requirements.yml:
+Add this role to galaxy.yml:
 ```yaml
 - src: xilonz.trellis_nixstats # Case-sensitive!
-  version: 0.1.0 # Check for latest version!
+  version: 0.2.0 # Check for latest version!
 ```
-Run `$ ansible-galaxy install -r requirements.yml` to install this new role.
+Run `$ ansible-galaxy install -r galaxy.yml` to install this new role.
 
 ## Role variables
 
@@ -21,9 +21,9 @@ Run `$ ansible-galaxy install -r requirements.yml` to install this new role.
 # group_vars/<environment>/main.yml
 ###################################
 
-nixstats_user_id: ''
-nixstats_server_id: ''
-nixstats_database_name: '' #(optional, by default first database)
+nixstats_user_id: '' #(required)
+nixstats_server_id: '' #(required)
+nixstats_database_name: 'performance_schema' #(optional)
 nixstats_database_enabled: true #(optional)
 nixstats_nginx_enabled: true #(optional)
 nixstats_phpfpm_enabled: true #(optional)
@@ -42,9 +42,7 @@ roles:
 
 ## Limitations and known issues
 
-* Only one Database monitored per server
-* NGINX Logging is not set up. 
-* Doesn't detect php version to get right php-fpm folder
+* None
 
 Pull requests are welcomed.
 
