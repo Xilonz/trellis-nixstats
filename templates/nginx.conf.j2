@@ -1,9 +1,17 @@
 # {{ ansible_managed }}
-
 server {
     listen 8080;
     server_name localhost;
 
+    {% if nixstats_nginx_enabled %}
+    location /status_page {
+        stub_status on;
+        allow 127.0.0.1;
+        deny all;
+    }
+    {% endif %}
+
+    {% if nixstats_phpfpm_enabled %}
     location /status_phpfpm {
         fastcgi_pass unix:/var/run/php-fpm-wordpress.sock;        
         include fastcgi_params;
@@ -11,4 +19,5 @@ server {
         allow 127.0.0.1;
         deny all;
     }
+    {% endif %}
 }

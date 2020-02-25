@@ -38,7 +38,7 @@
   block: 
     - name: Nginx NIXStats to sites available
       template:
-        src: nginx_status.conf.j2
+        src: nginx.conf.j2
         dest: "{{ nginx_path }}/sites-available/nixstats_nginx.conf"
       notify: reload nginx
 
@@ -48,28 +48,13 @@
         dest: "{{ nginx_path }}/sites-enabled/nixstats_nginx.conf"
         state: link
       notify: reload nginx
-  when: nixstats_nginx_enabled
+  when: nixstats_nginx_enabled or nixstats_phpfpm_enabled
 
-- name: Setup phpfpm NIXStats
-  block: 
-    - name: Nginx NIXStats to sites available
-      template:
-        src: phpfpm_status.conf.j2
-        dest: "{{ nginx_path }}/sites-available/nixstats_phpfpm.conf"
-      notify: reload nginx
-
-    - name: Nginx NIXStats to sites enabled
-      file:
-        src: "{{ nginx_path }}/sites-available/nixstats_phpfpm.conf"
-        dest: "{{ nginx_path }}/sites-enabled/nixstats_phpfpm.conf"
-        state: link
-      notify: reload nginx
-
-    - name: Create NIXStats php-fpm configuration file
-      template:
-        src: php-fpm.conf.j2
-        dest: /etc/php/7.3/fpm/pool.d/nixstats.conf
-      notify: reload php-fpm
+- name: Setup NIXStats php-fpm configuration file 
+  template:
+    src: php-fpm.conf.j2
+    dest: /etc/php/7.3/fpm/pool.d/nixstats.conf
+  notify: reload php-fpm
   when: nixstats_phpfpm_enabled
 
 - name: NIXStats configuration
