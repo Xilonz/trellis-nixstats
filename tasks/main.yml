@@ -18,21 +18,9 @@
       file: path=/tmp/nixstatsagent.sh state=absent
   when: not service_status.stat.exists
 
-- name: Setup Database NIXStats
-  block:
-    - name: Install Mysql Dependencies
-      apt:
-        name: python-mysqldb
-
-    - name: Get the first database name.
-      block:
-      - name: Get database name
-        set_fact:
-          nixstats_database_name: "{{ site_env.db_name }}"
-        with_dict: "{{ wordpress_sites }}"
-        when: site_uses_local_db and item.value.db_create | default(true)
-      when: nixstats_database_name is undefined
-  when: nixstats_database_enabled
+- name: Install Mysql Dependencies
+  apt:
+    name: python-mysqldb
 
 - name: Setup Nginx NIXStats
   block: 
@@ -62,13 +50,13 @@
     path: /var/spool/rsyslog/
     state: directory
 
-- name: Setup NIXtats rsyslog
+- name: Setup NIXStats rsyslog
   template:
     src: rsyslog.conf.j2 
     dest: /etc/rsyslog.d/31-nixstats.conf
   notify: reload rsyslog
 
-- name: Setup Nixtats rsyslog nginx
+- name: Setup NIXStats rsyslog nginx
   template:
     src: rsyslog-nginx.conf.j2 
     dest: /etc/rsyslog.d/33-nixstats-nginx.conf

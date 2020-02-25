@@ -1,3 +1,4 @@
 nixstats_database_enabled: true
+nixstats_database_name: performance_schema
 nixstats_nginx_enabled: true
 nixstats_phpfpm_enabled: true
